@@ -30,7 +30,7 @@ Plaintext: `password`
 
 `./argon_cracker -w wordlist.txt -h hashes.txt`
 ### Change Log:
-- https://github.com/cyclone-github/argon_cracker/blob/main/CHANGELOG.me
+- https://github.com/cyclone-github/argon_cracker/blob/main/CHANGELOG.md
 
 ### Compile from source code info:
 - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
