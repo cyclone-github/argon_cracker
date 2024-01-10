@@ -32,10 +32,14 @@ Plaintext: `password`
 ### Change Log:
 - https://github.com/cyclone-github/argon_cracker/blob/main/CHANGELOG.md
 
-### Compile from source code info:
-- https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
-- example compile & run (Go must be installed, see "intro_to_go.txt" above):
-  - `go mod init argon_cracker.go`
+### Compile from source:
+- If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
+- This assumes you have Go and Git installed
+  - `git clone https://github.com/cyclone-github/argon_cracker.git`
+  - `cd argon_cracker`
+  - `go mod init argon_cracker`
   - `go mod tidy`
-  - `go build -ldflags="-s -w" argon_cracker.go`
+  - `go build -ldflags="-s -w" .`
   - `./argon_cracker -h {hash file} -w {wordlist file} -t {CPU threads to use (optional)}`
+- Compile from source code how-to:
+  - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
