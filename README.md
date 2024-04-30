@@ -1,3 +1,5 @@
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=argon_cracker&theme=gruvbox)](https://github.com/cyclone-github/)
+
 # Argon2id Hash Cracker
 ```
  ---------------------------------
