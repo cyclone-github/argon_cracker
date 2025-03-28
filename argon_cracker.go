@@ -35,6 +35,12 @@ v0.1.1; 2024-01-04.1930;
 	added -t flag to allow user to specify CPU threads
 	added hash sanity checks
 	cleaned up & refactored code
+v0.1.2; 2025-03-28;
+	fixed race condition: https://github.com/cyclone-github/argon_cracker/issues/5
+	fixed close on closed channel: https://github.com/cyclone-github/argon_cracker/issues/6
+
+TODO:
+Implement codebase from yescrypt_crack (safe concurrent goroutines)
 */
 
 // clear screen function
@@ -184,7 +190,7 @@ func printWelcomeScreen(hashFileFlag, wordlistFileFlag *string, validHashCount, 
 	fmt.Fprintf(os.Stderr, "Invalid Hashes:\t%d\n", invalidHashCount)
 	fmt.Fprintf(os.Stderr, "CPU Threads:\t%d\n", numThreads)
 	fmt.Fprintf(os.Stderr, "Wordlist:\t%s\n", *wordlistFileFlag)
-	fmt.Fprintln(os.Stderr, "Working...\n")
+	fmt.Fprintln(os.Stderr, "Working...\n ")
 }
 
 // handle graceful shutdown if ctrl+c is pressed
@@ -198,6 +204,14 @@ func handleGracefulShutdown(stopChan chan struct{}) {
 	}()
 }
 
+// stop channel sync
+var stopOnce sync.Once
+
+func closeStopChan(stopChan chan struct{}) {
+	time.Sleep(500 * time.Millisecond) // hacky way to keep from closing early until code base from yescrypt_crack can be implemented
+	stopOnce.Do(func() { close(stopChan) })
+}
+
 // hash cracking worker
 func startWorker(ch <-chan string, stopChan chan struct{}, uncrackedHashes *HashSet, crackedCountCh chan int, linesProcessedCh chan int) {
 	for {
@@ -206,16 +220,23 @@ func startWorker(ch <-chan string, stopChan chan struct{}, uncrackedHashes *Hash
 			return
 		case word, ok := <-ch:
 			if !ok {
-				close(stopChan) // channel closed, no more words to process
+				closeStopChan(stopChan) // channel closed, no more words to process
 				return
 			}
+			uncrackedHashes.mu.Lock()
+			hashesCopy := make(map[string]string, len(uncrackedHashes.m))
 			for hash, encodedParams := range uncrackedHashes.m {
+				hashesCopy[hash] = encodedParams
+			}
+			uncrackedHashes.mu.Unlock()
+
+			for hash, encodedParams := range hashesCopy {
 				if verifyArgon2idHash(word, encodedParams) {
 					fmt.Printf("%s:%s\n", hash, word)
 					uncrackedHashes.Remove(hash)
 					crackedCountCh <- 1 // increment cracked count
 					if uncrackedHashes.Length() == 0 {
-						close(stopChan) // no more hashes to process
+						closeStopChan(stopChan) // no more hashes to process
 						return
 					}
 				}
@@ -238,7 +259,6 @@ func monitorAndPrintResults(crackedCountCh, linesProcessedCh <-chan int, stopCha
 			linesProcessed++
 		case <-stopChan:
 			elapsedTime := time.Since(startTime)
-			time.Sleep(100 * time.Millisecond) // needed to catch crackedCount
 			printStats(elapsedTime, crackedCount, validHashCount, linesProcessed)
 			wg.Done()
 			return
@@ -274,7 +294,7 @@ func main() {
 	if *helpFlag {
 		fmt.Fprintln(os.Stderr, "Cyclone's Argon2id Hash Cracker")
 		fmt.Fprintln(os.Stderr, "\nUsage example:")
-		fmt.Fprintln(os.Stderr, "\n./argon_cracker -h {hash file} -w {wordlist file} -t {CPU threads to use (optional)}\n")
+		fmt.Fprintln(os.Stderr, "\n./argon_cracker -h {hash file} -w {wordlist file} -t {CPU threads to use (optional)}\n ")
 		flag.Usage()
 		os.Exit(0)
 	}
@@ -287,7 +307,7 @@ func main() {
 	}
 
 	if *versionFlag {
-		fmt.Fprintln(os.Stderr, "v0.1.1; 2024-01-04.1930")
+		fmt.Fprintln(os.Stderr, "v0.1.2; 2025-03-28")
 		os.Exit(0)
 	}
 
