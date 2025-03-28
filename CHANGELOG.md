@@ -1,3 +1,8 @@
+### v0.1.2; 2025-03-28
+```
+fixed race condition: https://github.com/cyclone-github/argon_cracker/issues/5
+fixed close on closed channel: https://github.com/cyclone-github/argon_cracker/issues/6
+```
 ### v0.1.1; 2024-01-04.1930
 ```
 - fixed https://github.com/cyclone-github/argon_cracker/issues/2
