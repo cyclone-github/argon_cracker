@@ -1,7 +1,7 @@
 module argon_cracker
 
-go 1.24.1
+go 1.24.3
 
-require golang.org/x/crypto v0.36.0
+require golang.org/x/crypto v0.39.0
 
-require golang.org/x/sys v0.31.0 // indirect
+require golang.org/x/sys v0.33.0 // indirect
