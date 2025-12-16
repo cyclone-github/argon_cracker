@@ -1,4 +1,4 @@
-[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=argon_cracker&theme=gruvbox)](https://github.com/cyclone-github/argon_cracker/)
+[![Readme Card](https://github-readme-stats-fast.vercel.app/api/pin/?username=cyclone-github&repo=argon_cracker&theme=gruvbox)](https://github.com/cyclone-github/argon_cracker/)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/cyclone-github/argon_cracker)](https://goreportcard.com/report/github.com/cyclone-github/argon_cracker)
 [![GitHub issues](https://img.shields.io/github/issues/cyclone-github/argon_cracker.svg)](https://github.com/cyclone-github/argon_cracker/issues)
@@ -39,6 +39,15 @@ Plaintext: `password`
 `./argon_cracker -w wordlist.txt -h hashes.txt`
 ### Changelog:
 - https://github.com/cyclone-github/argon_cracker/blob/main/CHANGELOG.md
+
+### Install latest release:
+```
+go install github.com/cyclone-github/argon_cracker@latest
+```
+### Install from latest source code (bleeding edge):
+```
+go install github.com/cyclone-github/argon_cracker@main
+```
 
 ### Compile from source:
 - If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
